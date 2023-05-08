@@ -4,6 +4,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const Detail = ({navigation}:any) => {
+  
     const [originalProducts, setoriginalProducts] = useState([])
     useFocusEffect(() => {
 
@@ -13,8 +14,9 @@ const Detail = ({navigation}:any) => {
                 setoriginalProducts(datas)
             })
 
-
+        
     })
+
     const handleDelete = (id:any)=> {
         
           const updatedFavorites = originalProducts.filter((item : any) => item.id !== id);

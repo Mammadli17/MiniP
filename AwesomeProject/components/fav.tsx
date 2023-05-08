@@ -8,10 +8,27 @@ import { useFocusEffect } from '@react-navigation/native';
 const fav = ({navigation,route}:any) => {
   const [originalProducts, setoriginalProducts] = useState<any>([])
   const [favorites, setfavorites] = useState<any>([])
-
-  
-
-
+  const [basket, setbasket] = useState<any>([])
+  const [isFavorite, setIsFavorite] = useState<any>(false)
+ 
+  const {id} = route.params
+  const myBasket= () => {
+    const Data : any = {
+      id: id,
+      name:originalProducts.name,
+      price:originalProducts.price,
+      photo:originalProducts.photo,
+      serias:originalProducts.serias,
+      color:originalProducts.color,
+      count:1
+  }
+  AsyncStorage.getItem('basket')
+  .then(data => {
+      let dat = JSON.parse(data ?? '[]');
+      setbasket(dat)
+  })
+      AsyncStorage.setItem('basket', JSON.stringify([...basket,Data]));
+  }
   const MyFunc =() => {
     let newTodo : ToDo = {
       id: id,
@@ -29,11 +46,12 @@ const fav = ({navigation,route}:any) => {
       setfavorites(datas)
   })
       AsyncStorage.setItem('favorite', JSON.stringify([...favorites,newTodo]));
-
-
+      setIsFavorite(true)
   }
-  
-  const {id} = route.params
+
+ 
+ 
+
   useEffect(() => {
 
     axios.get('https://64568d9d2e41ccf169201e42.mockapi.io/users/users/'+id)
@@ -42,9 +60,15 @@ const fav = ({navigation,route}:any) => {
 
             
         })
+          AsyncStorage.getItem('basket').then(data => {
+          let basket = JSON.parse(data ?? '[]');
+          setbasket(basket);
+    
+        });
         
         
       }, [])
+
       
       useFocusEffect(() => {
         AsyncStorage.getItem('favorite').then(data => {
@@ -60,7 +84,7 @@ const fav = ({navigation,route}:any) => {
           <ArrowLeft padding={20}/>
         </TouchableOpacity >
         <TouchableOpacity onPress={()=>MyFunc()}>
-        <Path33961 padding={20}/>
+        <Path33961 fill={ isFavorite ? 'black' : 'white' }  padding={20}/>
         </TouchableOpacity>
    
       
@@ -88,7 +112,7 @@ const fav = ({navigation,route}:any) => {
       <Text style={{fontSize:20,color:"black"}}>Price</Text>
       <Text style={{color:"blue",fontSize:20}}>$ {originalProducts.price}</Text>
     </View>
-    <TouchableOpacity style={{alignItems:"center",backgroundColor:"blue",padding:20,marginHorizontal:50 ,marginTop:10,borderRadius:10}}>
+    <TouchableOpacity onPress={()=>myBasket()} style={{alignItems:"center",backgroundColor:"blue",padding:20,marginHorizontal:50 ,marginTop:10,borderRadius:10}}>
         <Text style={{color:"white",fontSize:20 }}>Add to Basket</Text>
        </TouchableOpacity>
 
